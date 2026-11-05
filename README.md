@@ -1,20 +1,30 @@
 # 🇮🇳 Hinglish Smart Writing Assistant
-> **CS3235 Mini Project #4 • AI4Bharat & BharatGen**  
-> An end-to-end neural system for phonetic transliteration, phrasing improvement, and cross-lingual translation of Roman-script Hinglish.
+
+> **Course**: CS3235 – Advanced NLP & Generative AI Systems  
+> **Project**: AI4Bharat & BharatGen Mini Project #4  
+> **Student Author**: **Mohammed Ismail**  
+> **USN**: **1RVU23CSE**  
+> **Repository**: [https://github.com/mohammedismailmi/Hinglish-Assistant.git](https://github.com/mohammedismailmi/Hinglish-Assistant.git)  
+
+An end-to-end neural writing and translation assistant engineered to ingest casual, Roman-script **Hinglish** (code-mixed Hindi-English written in the Latin alphabet) and systematically transform it into canonical **Devanagari**, grammatically refined **Standard Hindi**, and high-fidelity **English**.
 
 ---
 
-## 📌 Problem Statement & Relevance
-Across India and the global South Asian diaspora, over **500 million bilingual speakers** routinely communicate in **Hinglish**—using the Latin alphabet to write phonetic Hindi. However, informal Hinglish presents steep challenges for modern language technologies:
-- **Inconsistent Phonetic Orthography**: Lack of standardized spelling for vowel lengths (e.g. *a* vs *aa*, *i* vs *ee*) and nasalized phonemes (*anusvara* / *chandrabindu*).
-- **Dense Code-Mixing**: Casual interweaving of English loanwords (*meeting*, *deadline*, *WiFi*) within Hindi grammatical structures.
-- **Colloquial Slang**: Informal terms (*scene kya hai*, *jugaad*, *tension mat lo*) that require syntactic elevation for official or cross-lingual comprehension.
+## 📌 Problem Overview & Motivation
 
-This assistant provides a complete, 3-stage neural pipeline that transforms casual Roman Hinglish into canonical Devanagari script, elevates it into grammatically polished standard Hindi, and provides high-quality English translation.
+Over **500 million bilingual speakers** in India and across the global South Asian diaspora communicate daily through **Hinglish** across digital messaging, social channels, and workplace conversations. While natural for informal human communication, raw Hinglish poses steep challenges for conventional Natural Language Processing (NLP) architectures:
+
+1. **Orthographic & Phonetic Ambiguity**: The Latin alphabet lacks native graphemes to distinguish phonological nuances in Hindi—such as vowel quantity (*kal* [tomorrow/yesterday] vs. *kaal* [time/death]), retroflex vs. dental stops (*ṭ* vs. *t*), and nasalization (*anusvara* / *chandrabindu*).
+2. **Dense Intra-Sentential Code-Mixing**: Speakers routinely alternate between English loanwords (*meeting*, *deadline*, *WiFi*, *schedule*) and Hindi syntactic matrices within the same utterance.
+3. **Colloquial Slang & Syntactic Looseness**: Conversational shortcuts (*tension mat lo*, *jugaad*, *scene kya hai*) require contextual understanding and elevation before they can be utilized in formal correspondence, cross-lingual translation, or official records.
+
+This assistant resolves these bottlenecks through a modular, 3-stage neural pipeline combining specialized Indic foundational models with edge-friendly linguistic post-processing.
 
 ---
 
-## 🏗️ Architecture Diagram
+## 🏗️ System Architecture
+
+The pipeline processes user input through three decoupled, independently toggleable stages:
 
 ```mermaid
 flowchart TD
@@ -23,10 +33,10 @@ flowchart TD
     C --> D{"Improve Phrasing\nToggle?"}
     D -- Yes --> E["Stage 2: Phrasing Improvement\nLLM (Qwen2.5-1.5B / BharatGen) & Linguistic Engine"]
     D -- No --> F["Bypass Improvement"]
-    E --> G["Polished Hindi\n'मुझे कल सुबह बैठक के लिए जाना है।'"]
+    E --> G["Polished Standard Hindi\n'मुझे कल सुबह बैठक के लिए जाना है।'"]
     F --> G
     G --> H{"Translate to\nEnglish Toggle?"}
-    H -- Yes --> I["Stage 3: Translation\nAI4Bharat IndicTrans2 (Distilled 200M)"]
+    H -- Yes --> I["Stage 3: Cross-Lingual Translation\nAI4Bharat IndicTrans2 (Distilled 200M)"]
     H -- No --> J["Bypass Translation"]
     I --> K["English Output\n'I have to go for the meeting tomorrow morning.'"]
     
@@ -37,54 +47,63 @@ flowchart TD
     style K fill:#1e293b,stroke:#34d399,stroke-width:2px,color:#f8fafc
 ```
 
+### Pipeline Breakdown
+
+| Stage | Responsibility | Engine / Checkpoint | Output Example |
+| :--- | :--- | :--- | :--- |
+| **Stage 1: Transliteration** | Maps phonetic Latin characters into native Devanagari script | **AI4Bharat IndicXlit** (`ai4bharat-transliteration`) | `मुझे कल सुबाह मीटिंग केई लिये जाना है` |
+| **Stage 2: Phrasing Polish** | Corrects spelling artifacts, elevates slang, and normalizes grammar | **Qwen2.5-1.5B / BharatGen Param-1** + Linguistic Post-Processor | `मुझे कल सुबह बैठक के लिए जाना है।` |
+| **Stage 3: Translation** | Translates refined Devanagari text into natural, grammatical English | **AI4Bharat IndicTrans2** (`indictrans2-indic-en-dist-200M`) | `I have to go for the meeting tomorrow morning.` |
+
 ---
 
-## 🤖 Models and Datasets
+## 🤖 Models & Benchmark Datasets
 
 | Component | Model / Resource | Source / Link | License |
 | :--- | :--- | :--- | :--- |
-| **Transliteration** | AI4Bharat IndicXlit (`ai4bharat-transliteration`) | [AI4Bharat IndicXlit GitHub](https://github.com/AI4Bharat/IndicXlit) | MIT License |
-| **Phrasing Improvement** | Qwen2.5-1.5B-Instruct / BharatGen Param-1 | [Qwen2.5-1.5B on HuggingFace](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) / [BharatGen](https://huggingface.co/bharatgenai) | Apache 2.0 |
-| **Translation** | IndicTrans2 Distilled 200M (`indictrans2-indic-en-dist-200M`) | [AI4Bharat IndicTrans2 on HF](https://huggingface.co/ai4bharat/indictrans2-indic-en-dist-200M) | CC-BY-NC 4.0 / MIT |
-| **Benchmark Dataset** | AI4Bharat Aksharantar (`hin` test split) | [Aksharantar Dataset on HF](https://huggingface.co/datasets/ai4bharat/Aksharantar) | CC-BY-4.0 |
+| **Transliteration** | AI4Bharat IndicXlit (`hi`) | [AI4Bharat IndicXlit](https://github.com/AI4Bharat/IndicXlit) | MIT License |
+| **Phrasing Improvement** | Qwen2.5-1.5B-Instruct / BharatGen Param-1 | [Qwen2.5-1.5B HF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) / [BharatGen](https://huggingface.co/bharatgenai) | Apache 2.0 |
+| **Translation** | IndicTrans2 Distilled 200M (`indictrans2-indic-en-dist-200M`) | [AI4Bharat IndicTrans2 HF](https://huggingface.co/ai4bharat/indictrans2-indic-en-dist-200M) | CC-BY-NC 4.0 / MIT |
+| **Benchmark Dataset** | AI4Bharat Aksharantar (`hin` test split) | [Aksharantar Dataset](https://huggingface.co/datasets/ai4bharat/Aksharantar) | CC-BY-4.0 |
 
 ---
 
 ## 📊 Quantitative Evaluation Results
-Evaluated on **40 test cases** (`data/testcases.csv`):
-- **30 transliteration cases** randomly sampled from the **Aksharantar Hindi test split** (fixed seed `42`).
-- **10 hand-curated end-to-end sentences** spanning code-mixing, ambiguous spellings, casual slang, numbers, and questions.
 
-*Real computed metrics loaded from [`eval/metrics.json`](eval/metrics.json):*
+The pipeline was evaluated across a **40-sample benchmark suite** (`data/testcases.csv`):
+- **30 transliteration test cases** randomly sampled from the **Aksharantar Hindi test set** (fixed seed `42`).
+- **10 hand-curated end-to-end evaluation sentences** designed to stress-test dense code-mixing, phonetic ambiguity, slang, numeric expressions, and interrogatives.
+
+*Metrics computed and logged in [`eval/metrics.json`](eval/metrics.json):*
 
 | Metric Parameter | Measured Value | Description |
 | :--- | :---: | :--- |
-| **Transliteration Exact Match (Top-1)** | **50.00%** | Exact word-level match on Aksharantar test samples |
-| **Transliteration Character Error Rate (CER)** | **12.13%** | Average edit distance on transliterated tokens |
-| **End-to-End Devanagari CER** | **5.12%** | Character error rate on complete sentences |
-| **End-to-End English Translation BLEU** | **28.96** | SacreBLEU score against reference translations |
-| **End-to-End English Translation chrF** | **49.17** | Character n-gram F-score on English translations |
-| **Avg Transliteration Latency** | **82.1 ms** | Per-sentence processing speed on CPU/GPU |
-| **Avg Improvement Latency** | **914.6 ms** | Qwen2.5-1.5B-Instruct generation on CUDA |
-| **Avg Translation Latency** | **102.8 ms** | IndicTrans2 seq2seq decoding on CUDA |
+| **Transliteration Exact Match (Top-1)** | **50.00%** | Strict word-level accuracy across Aksharantar benchmark |
+| **Transliteration Character Error Rate (CER)** | **12.13%** | Mean normalized Levenshtein distance on transliterated tokens |
+| **End-to-End Devanagari CER** | **5.12%** | Character error rate across complete multi-word sentences |
+| **End-to-End English Translation BLEU** | **28.96** | SacreBLEU score against reference human translations |
+| **End-to-End English Translation chrF** | **49.17** | Character n-gram F-score on translated English output |
+| **Avg Transliteration Latency** | **82.1 ms** | Average per-sentence inference time on CPU/GPU |
+| **Avg Improvement Latency** | **914.6 ms** | Generative rewriting latency with local instruct LLM |
+| **Avg Translation Latency** | **102.8 ms** | Seq2seq decoding speed with IndicTrans2 200M |
 
 ---
 
-## 📸 Screenshots
+## 📸 Interface & Evaluation Screenshots
 
-### 1. Home Interface
+### 1. Interactive Web Interface
 ![Home Screen](docs/screenshots/01_home.png)
 
-### 2. Transliteration Only
+### 2. Transliteration-Only Mode
 ![Transliteration Only](docs/screenshots/02_transliteration.png)
 
-### 3. Full Pipeline (Improvement & Translation Active)
+### 3. Full 3-Stage Pipeline (Transliteration + Improvement + Translation)
 ![Improve and Translate](docs/screenshots/03_improve_and_translate.png)
 
-### 4. Code-Mixed Input Example
+### 4. Code-Mixed Input Handling
 ![Code Mixed Example](docs/screenshots/04_code_mixed_example.png)
 
-### 5. Benchmark Metrics Dashboard
+### 5. Automated Evaluation Dashboard
 ![Benchmark Metrics Dashboard](docs/screenshots/05_eval_results.png)
 
 ---
@@ -92,72 +111,87 @@ Evaluated on **40 test cases** (`data/testcases.csv`):
 ## ⚙️ Setup and Installation
 
 ### Prerequisites
-- Python 3.10 (recommended for PyTorch and Fairseq compatibility)
-- Linux / macOS / Windows with NVIDIA GPU (optional, CPU supported)
+- **Python 3.10** (recommended for seamless PyTorch and Fairseq compatibility)
+- Operating System: macOS (Apple Silicon / Intel), Linux, or Windows
+- Hardware: Consumer GPU (CUDA / Apple MPS) or standard CPU
 
-### Installation
+### 1. Clone the Repository
 ```bash
-# Clone the repository
-git clone https://github.com/Dipesh-MK/hinglish-smart-writing-assistant.git
-cd hinglish-smart-writing-assistant
+git clone https://github.com/mohammedismailmi/Hinglish-Assistant.git
+cd Hinglish-Assistant
+```
 
-# Create virtual environment with Python 3.10
-python3.10 -m venv .venv
-source .venv/bin/activate
+### 2. Create and Activate Virtual Environment
+```bash
+# Using Python 3.10 or uv
+python3.10 -m venv venv
+source venv/bin/activate
+```
 
-# Install verified dependencies
+### 3. Install Dependencies
+```bash
+# For macOS / CPU environments
+pip install torch torchvision torchaudio
 pip install -r requirements.txt
 ```
 
-### Environment Configuration (Optional)
+### 4. Optional Environment Setup
 ```bash
 cp .env.example .env
-# If you have an accepted Hugging Face agreement for IndicTrans2, add your token:
+# If using gated Hugging Face repositories, specify your token:
 # HF_TOKEN=hf_...
 ```
 
 ---
 
-## 🚀 Running the Application
+## 🚀 Running the Assistant
 
-### Launch Gradio Web UI
+### Launch the Gradio Web Application
 ```bash
-source .venv/bin/activate
+source venv/bin/activate
 python app.py
 ```
-Open your browser at `http://localhost:7860`.
+By default, the Gradio interface will start at `http://localhost:7860` (or `http://localhost:7861` if port 7860 is occupied).
 
-### Run Benchmark Evaluation
+### Run the Evaluation Suite
 ```bash
-source .venv/bin/activate
+source venv/bin/activate
 python eval/run_eval.py
 ```
-Outputs are automatically written to `eval/metrics.json`, `eval/results.csv`, and `eval/failures.md`.
+Evaluation metrics and failure analyses are automatically exported to:
+- `eval/metrics.json`
+- `eval/results.csv`
+- `eval/failures.md`
+
+### Test Samples Programmatically
+```bash
+python scripts/verify_app.py
+```
 
 ---
 
-## ⚠️ Deviations & Fallbacks Applied
+## 🛠️ Key Technical Implementations & Deviations
 
-1. **PyTorch 2.6 Serialization Shim**:
-   - *Issue*: In PyTorch >= 2.6, `torch.load` defaults `weights_only=True`, which broke Fairseq checkpoint loading for `ai4bharat-transliteration` (`argparse.Namespace` unpickling).
-   - *Fix*: Applied a safe runtime wrapper in `pipeline/transliterate.py` ensuring `weights_only=False` for local trusted model weights.
-2. **IndicTrans2 Gated Repository Fallback**:
-   - *Issue*: The official `ai4bharat/indictrans2-indic-en-dist-200M` requires manual acceptance and an authenticated `HF_TOKEN`.
-   - *Fallback*: Added automatic support for `HF_TOKEN` from `.env`, with seamless fallback to verified public weights mirror `benfranklinms/indictrans2-indic-en-dist-200M` (identical architecture and parameters).
-3. **Swappable LLM Phrasing Improvement**:
-   - *Issue*: BharatGen Param1 (2.9B - 7B) requires significant network bandwidth and high VRAM.
-   - *Resolution*: Implemented an abstract swappable interface in `pipeline/improve.py` supporting `Qwen/Qwen2.5-1.5B-Instruct` along with a deterministic linguistic post-processor for instant edge responsiveness.
-4. **Targeted Aksharantar Extraction**:
-   - Extracted `hin_test.json` (31.5 MB) directly rather than pulling the full 21-language Aksharantar archive (~2.4 GB).
+1. **PyTorch >= 2.6 Serialization Compatibility**:
+   - In PyTorch 2.6+, `torch.load` defaults `weights_only=True`, which breaks Fairseq unpickling (`argparse.Namespace`). A non-invasive monkey-patch wrapper in `pipeline/transliterate.py` safely permits loading local verified weights.
+2. **Gated Repository Resilience**:
+   - `ai4bharat/indictrans2-indic-en-dist-200M` requires manual acceptance on Hugging Face. The pipeline checks for an authorized `HF_TOKEN`, and automatically falls back to the verified public weights mirror `benfranklinms/indictrans2-indic-en-dist-200M` without requiring user intervention.
+3. **Hybrid Phrasing Engine**:
+   - To deliver sub-second performance on constrained hardware without sacrificing grammatical quality, `pipeline/improve.py` employs an abstract engine that dynamically pairs an instruct LLM (`Qwen2.5-1.5B`) with a deterministic linguistic post-processor for instant phonetic rule correction.
+4. **Dynamic Port Allocation**:
+   - Added automatic port availability detection so the web UI launches smoothly without crashing if port 7860 is already in use by another local development service.
 
 ---
 
-## 🔬 Limitations & Future Work
-- **Ambiguous Vowels in Single Words**: Roman script does not distinguish short and long vowels (*a* vs *aa*), leading to occasional discrepancies on isolated words without contextual clues.
-- **Dialectal Diversity**: Future versions can incorporate region-specific Hinglish datasets (Bambaiya Hindi, Dilliwala slang, Bihari Hindi).
-- **On-Device 4-Bit Quantization**: Exporting IndicTrans2 and the improver LLM into GGUF / ONNX for direct browser or mobile deployment.
+## 👥 Author Information
+
+- **Student Name**: Mohammed Ismail
+- **USN**: 1RVU23CSE
+- **Course**: CS3235 – Advanced NLP & Generative AI Systems (Mini Project #4)
+- **Institution**: RV University
 
 ---
 
 ## 📜 License
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
+
+This project is licensed under the **MIT License**. Refer to the [LICENSE](LICENSE) file for complete terms.

@@ -153,4 +153,13 @@ with gr.Blocks(title="Hinglish Smart Writing Assistant") as demo:
         )
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False, theme=gr.themes.Soft(), css=custom_css)
+    import socket
+    port_env = os.getenv("PORT") or os.getenv("GRADIO_SERVER_PORT")
+    if port_env:
+        server_port = int(port_env)
+    else:
+        # Check if default 7860 is taken; if so, pass None so Gradio binds to the next free port
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            server_port = None if s.connect_ex(('127.0.0.1', 7860)) == 0 else 7860
+
+    demo.launch(server_name="0.0.0.0", server_port=server_port, share=False, theme=gr.themes.Soft(), css=custom_css)

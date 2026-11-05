@@ -1,9 +1,9 @@
 # Hinglish Smart Writing Assistant: Technical Project Report
 **Course**: CS3235 – Advanced NLP & Generative AI Systems  
 **Project**: AI4Bharat & BharatGen Mini Project #4  
-**Author**: Dipesh (GitHub: `Dipesh-MK`)  
+**Author**: Mohammed Ismail (USN: `1RVU23CSE` | GitHub: `mohammedismailmi`)  
 **Date**: November 2026  
-**Repository**: `https://github.com/Dipesh-MK/hinglish-smart-writing-assistant`
+**Repository**: `https://github.com/mohammedismailmi/Hinglish-Assistant.git`
 
 ---
 

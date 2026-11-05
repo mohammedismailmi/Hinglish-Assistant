@@ -1,6 +1,6 @@
 # 🎙️ 2-Minute Screen-Recording Script
 **Project**: Hinglish Smart Writing Assistant (CS3235 Mini Project #4)  
-**Presenter**: Dipesh  
+**Presenter**: Mohammed Ismail (USN: 1RVU23CSE)  
 **Target Duration**: 120 seconds (2:00)
 
 ---
